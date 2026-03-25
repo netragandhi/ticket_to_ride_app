@@ -1,69 +1,13 @@
 import numpy as np
 import cv2 as cv
 import matplotlib.pyplot as plt
-
-routes = {
-    "miami_caracas": {
-        "length": 2,
-        "segment_size": (0.026, 0.016),  # width_ratio, height_ratio
-        "segments": [
-            {"center": (0.1832, 0.5099), "angle": 9},
-            {"center": (0.1976, 0.5433), "angle": 85}  # positive = CCW
-        ]
-    },
-        "daressalaam_djibouti": {
-        "length": 1,
-        "segment_size": (0.026, 0.016),  # width_ratio, height_ratio
-        "segments": [
-            {"center": (0.5462, 0.6217), "angle": 100}  # positive = CCW
-        ]
-    },
-        "edinburgh_hamburg": {
-        "length": 1,
-        "segment_size": (0.026, 0.016),  # width_ratio, height_ratio
-        "segments": [
-            {"center": (0.4257, 0.2568), "angle": 9}  # positive = CCW
-        ]
-    }
-
-}
-
-normalized_points = [ # make these regions x1, y1, x2, y2
-    (0.2336, 0.1875),
-    (0.0378, 0.1068),
-    (0.0339, 0.6547),
-    (0.3330, 0.6456),
-    (0.0874, 0.2132),
-    (0.3312, 0.5181),
-    (0.5897, 0.8226),
-    (0.5730, 0.3159),
-    (0.5894, 0.1994),
-    (0.8857, 0.7680),
-    (0.7315, 0.7873),
-    (0.9581, 0.3691),
-    (0.5087, 0.5938),
-    (0.5170, 0.9188),
-]
+from board_mapping import SEGMENT_SIZE, ROUTES
+from norm_points import NORM_POINTS, NORM_BOX_H, NORM_BOX_W
 
 def align_images(empty_img, played_img):
     # Loads image as single channel grayscale
     empty_gray = cv.cvtColor(empty_img, cv.COLOR_BGR2GRAY)
     played_gray = cv.cvtColor(played_img, cv.COLOR_BGR2GRAY)
-
-    h, w = empty_img.shape[:2]
-    box_w = 0.01
-    box_h = 0.01
-
-    normalized_boxes = []
-    for cx, cy in normalized_points:
-        x1 = cx - box_w/2
-        y1 = cy - box_h/2
-        x2 = cx + box_w/2
-        y2 = cy + box_h/2
-        normalized_boxes.append((x1, y1, x2, y2))
-
-    print(normalized_boxes) #visualize them
-    # mask = np.zeros((h, w), dtype=np.uint8)
 
     # Initiate SIFT detector
     sift = cv.SIFT_create()
@@ -95,12 +39,44 @@ def align_images(empty_img, played_img):
 
     # warp the played image to the size of the empty image
     aligned = cv.warpPerspective(played_img, H, (w, h))
-    cv.imshow("aligned", aligned)
+    # cv.imshow("aligned", aligned)
     return aligned
 
-# def find_corners(aligned_img)
+def match_images(empty_img, aligned_img):
+    empty_hsv = cv.cvtColor(empty_img, cv.COLOR_BGR2HSV).astype(np.float32)
+    played_hsv = cv.cvtColor(aligned_img, cv.COLOR_BGR2HSV).astype(np.float32)
 
-#     return top_left_corner, top_right_corner, bot_left_corner 
+    h, w = empty_img.shape[:2]
+
+    normalized_boxes = []
+    for cx, cy in NORM_POINTS:
+        x1 = int((cx - NORM_BOX_W/2) * w)
+        y1 = int((cy - NORM_BOX_H/2) * h)
+        x2 = int((cx + NORM_BOX_W/2) * w)
+        y2 = int((cy + NORM_BOX_H/2) * h)
+        normalized_boxes.append((x1, y1, x2, y2))
+
+    mask = np.zeros((h, w), dtype=np.uint8)
+    for x1, y1, x2, y2 in normalized_boxes:
+        mask[y1:y2, x1:x2] = 255
+
+    for c in [1,2]:  # S=1, V=2
+        template_vals = empty_hsv[:,:,c][mask==255]
+        played_vals = played_hsv[:,:,c][mask==255]
+
+        mean_t, std_t = template_vals.mean(), template_vals.std()
+        mean_p, std_p = played_vals.mean(), played_vals.std()
+
+        played_hsv[:,:,c] = (played_hsv[:,:,c] - mean_p) * (std_t / (std_p + 1e-6)) + mean_t
+        played_hsv[:,:,c] = np.clip(played_hsv[:,:,c], 0, 255)
+        print(f"Channel {c}")
+        print(f"Template mean/std: {mean_t:.2f}, {std_t:.2f}")
+        print(f"Played mean/std:   {mean_p:.2f}, {std_p:.2f}")
+        print("-----")
+
+    # H channel untouched
+    played_norm = cv.cvtColor(played_hsv.astype(np.uint8), cv.COLOR_HSV2BGR)
+    return played_norm
 
 def create_rotated_mask(board_shape, center_px, size_px, angle):
     mask = np.zeros(board_shape[:2], dtype=np.uint8)
@@ -128,7 +104,7 @@ def analyze_segment(empty_img, aligned_img, mask):
     if color_diff > 100: # these def need to be changed and determined statistically
         occupied = True
         reason = "color"
-    elif edge_diff > 25 or tex_diff > 800:
+    elif edge_diff > 50 or tex_diff > 1000:
         occupied = True
         reason = "edge/texture"
     else:
@@ -137,18 +113,18 @@ def analyze_segment(empty_img, aligned_img, mask):
 
     return occupied, color_diff, edge_diff, tex_diff, reason
 
-def analyze_routes(empty_img, aligned_img, routes):
-    h_empty, w_empty = empty_img.shape[:2]
+def analyze_routes(empty_img, aligned_img, ROUTES):
+    h, w = empty_img.shape[:2]
     results = {}
+    w_seg_px = int(SEGMENT_SIZE[0] * w)
+    h_seg_px = int(SEGMENT_SIZE[1] * h)
 
-    for route_name, route in routes.items():
-        w_seg_px = int(route["segment_size"][0] * w_empty)
-        h_seg_px = int(route["segment_size"][1] * h_empty)
+    for route_name, route in ROUTES.items():
         segment_results = []
 
         for seg in route["segments"]:
-            cx = int(seg["center"][0] * w_empty)
-            cy = int(seg["center"][1] * h_empty)
+            cx = int(seg["center"][0] * w)
+            cy = int(seg["center"][1] * h)
             angle = seg["angle"]
 
             mask = create_rotated_mask(aligned_img.shape, (cx, cy), (w_seg_px, h_seg_px), angle)
@@ -168,16 +144,17 @@ def analyze_routes(empty_img, aligned_img, routes):
         results[route_name] = segment_results
     return results
 
-def visualize_segments(image, routes, results):
+def visualize_segments(image, matched, ROUTES, results):
     vis = image.copy()
+    vis_matched = matched.copy()
     h_img, w_img = image.shape[:2]
+    w = int(SEGMENT_SIZE[0] * w_img)
+    h = int(SEGMENT_SIZE[1] * h_img)
 
     # Draw your existing segment boxes
     for route_name, segs in results.items():
-        for seg, seg_result in zip(routes[route_name]["segments"], segs):
+        for seg, seg_result in zip(ROUTES[route_name]["segments"], segs):
             cx, cy = seg_result["center"]
-            w = int(routes[route_name]["segment_size"][0] * w_img)
-            h = int(routes[route_name]["segment_size"][1] * h_img)
             angle = seg_result["angle"]
 
             rect = ((cx, cy), (w, h), angle)
@@ -185,6 +162,17 @@ def visualize_segments(image, routes, results):
 
             color = (0, 0, 255) if seg_result["occupied"] else (0, 255, 0)
             cv.drawContours(vis, [box], 0, color, 2)
+            cv.drawContours(vis_matched, [box], 0, color, 2)
+
+    # for x, y in NORM_POINTS:
+    #     # Calculate the actual pixel coordinates first
+    #     x1 = int((x - NORM_BOX_W/2) * w_img)
+    #     y1 = int((y - NORM_BOX_H/2) * h_img)
+    #     x2 = int((x + NORM_BOX_W/2) * w_img)
+    #     y2 = int((y + NORM_BOX_H/2) * h_img)
+
+    #     # Now draw using the clean integer points
+    #     cv.rectangle(vis, (x1, y1), (x2, y2), (255, 255, 255), 3)
 
     display = vis.copy()
     points = []
@@ -193,7 +181,7 @@ def visualize_segments(image, routes, results):
         nonlocal display
 
         if event == cv.EVENT_LBUTTONDOWN:
-            # 🔥 Normalize
+            # Normalize
             x_norm = x / w_img
             y_norm = y / h_img
 
@@ -218,10 +206,11 @@ def visualize_segments(image, routes, results):
 
             cv.rectangle(display, (x1, y1), (x2, y2), (255, 0, 0), 1)
 
-            cv.imshow("Segment Visualization", display)
+            cv.imshow("Empty Display", display)
 
-    cv.imshow("Segment Visualization", display)
-    cv.setMouseCallback("Segment Visualization", click_event)
+    cv.imshow("Empty Display", display)
+    cv.imshow("Played Display", vis_matched)
+    cv.setMouseCallback("Empty Display", click_event)
 
     while True:
         key = cv.waitKey(1) & 0xFF
@@ -231,10 +220,13 @@ def visualize_segments(image, routes, results):
     cv.destroyAllWindows()
 
 empty_img = cv.imread('imgs/empty.jpeg')
-played_img = cv.imread('imgs/played2.jpeg')
+played_img = cv.imread('imgs/played3.jpeg')
 
 aligned = align_images(empty_img, played_img)
-results = analyze_routes(empty_img, aligned, routes)
+matched = match_images(empty_img, aligned)
+# diff_vis = cv.absdiff(aligned, matched)
+# cv.imshow("Normalization Difference", diff_vis)
+results = analyze_routes(empty_img, matched, ROUTES)
 
 for route, segs in results.items():
     print(f"\nRoute: {route}")
@@ -243,4 +235,4 @@ for route, segs in results.items():
               f"color_diff={s['color_diff']:.2f}, edge_diff={s['edge_diff']:.2f}, "
               f"tex_diff={s['tex_diff']:.2f}, reason={s['reason']}")
 
-visualize_segments(empty_img, routes, results)
+visualize_segments(empty_img, matched, ROUTES, results)
