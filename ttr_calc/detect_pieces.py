@@ -104,7 +104,7 @@ def analyze_segment(empty_img, aligned_img, mask):
     if color_diff > 100: # these def need to be changed and determined statistically
         occupied = True
         reason = "color"
-    elif edge_diff > 50 or tex_diff > 1000:
+    elif edge_diff > 60 or tex_diff > 1000:
         occupied = True
         reason = "edge/texture"
     else:
@@ -185,8 +185,11 @@ def visualize_segments(image, matched, ROUTES, results):
             x_norm = x / w_img
             y_norm = y / h_img
 
-            print(f"Pixel: ({x}, {y})")
-            print(f"Normalized: ({x_norm:.4f}, {y_norm:.4f})")
+            # print(f"Pixel: ({x}, {y})")
+            # print(f"Normalized: ({x_norm:.4f}, {y_norm:.4f})")
+            print(f'{{"center": ({x_norm:.4f}, {y_norm:.4f}), "angle": XXX}},')
+
+
 
             points.append((x_norm, y_norm))
 
@@ -208,8 +211,8 @@ def visualize_segments(image, matched, ROUTES, results):
 
             cv.imshow("Empty Display", display)
 
-    cv.imshow("Empty Display", display)
     cv.imshow("Played Display", vis_matched)
+    cv.imshow("Empty Display", display)
     cv.setMouseCallback("Empty Display", click_event)
 
     while True:
