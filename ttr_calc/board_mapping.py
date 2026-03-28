@@ -626,6 +626,366 @@ ROUTES = { #maybe implement it so i can change the empty image
             {"center": (0.5789, 0.9023), "angle": 14},
             {"center": (0.6064, 0.9143), "angle": 14}
         ]
+    },
+        "null_perth_white": {
+        "cities": ("null", "perth"),
+        "length": 5,
+        "segments": [
+            {"center": (0.6557, 0.8945), "angle": -20},
+            {"center": (0.6817, 0.8776), "angle": -20},
+            {"center": (0.7073, 0.8611), "angle": -20},
+            {"center": (0.7346, 0.8423), "angle": -20},
+            {"center": (0.7600, 0.8258), "angle": -20}
+        ]
+    },
+        "null_perth_purple": {
+        "cities": ("null", "perth"),
+        "length": 5,
+        "segments": [
+            {"center": (0.6596, 0.9129), "angle": -20},
+            {"center": (0.6868, 0.8936), "angle": -20},
+            {"center": (0.7122, 0.8772), "angle": -20},
+            {"center": (0.7384, 0.8597), "angle": -20},
+            {"center": (0.7641, 0.8427), "angle": -20}
+        ]
+    },
+        "perth_sydney_white": {
+        "cities": ("perth", "sydney"),
+        "length": 2,
+        "segments": [
+            {"center": (0.8245, 0.8221), "angle": 8},
+            {"center": (0.8517, 0.8299), "angle": 8}
+        ]
+    },
+        "perth_sydney_yellow": {
+        "cities": ("perth", "sydney"),
+        "length": 2,
+        "segments": [
+            {"center": (0.8227, 0.8414), "angle": 8},
+            {"center": (0.8502, 0.8478), "angle": 8}
+        ]
+    },
+        "perth_darwin": {
+        "cities": ("perth", "darwin"),
+        "length": 2,
+        "segments": [
+            {"center": (0.8088, 0.7744), "angle": -52},
+            {"center": (0.8248, 0.7382), "angle": -52}
+        ]
+    },
+        "darwin_sydney": {
+        "cities": ("darwin", "sydney"),
+        "length": 2,
+        "segments": [
+            {"center": (0.8607, 0.7464), "angle": 70},
+            {"center": (0.8708, 0.7937), "angle": 70}
+        ]
+    },
+        "darwin_portmoresby": {
+        "cities": ("darwin", "portmoresby"),
+        "length": 1,
+        "segments": [
+            {"center": (0.8702, 0.6804), "angle": -16}
+        ]
+    },
+        "darwin_jakarta": {
+        "cities": ("darwin", "jakarta"),
+        "length": 2,
+        "segments": [
+            {"center": (0.7878, 0.6657), "angle": 13},
+            {"center": (0.8153, 0.6758), "angle": 13}
+        ]
+    },
+        "jakarta_manila": {
+        "cities": ("jakarta", "manila"),
+        "length": 2,
+        "segments": [
+            {"center": (0.7801, 0.6236), "angle": -52},
+            {"center": (0.7980, 0.5837), "angle": -52}
+        ]
+    },
+        "manila_tokyo": {
+        "cities": ("manila", "tokyo"),
+        "length": 2,
+        "segments": [
+            {"center": (0.8142, 0.4883), "angle": -70},
+            {"center": (0.8240, 0.4425), "angle": -70}
+        ]
+    },
+        "bangkok_hongkong_purple": {
+        "cities": ("bangkok", "hongkong"),
+        "length": 1,
+        "segments": [
+            {"center": (0.7523, 0.5139), "angle": -45}
+        ]
+    },
+        "bangkok_hongkong_black": {
+        "cities": ("bangkok", "hongkong"),
+        "length": 1,
+        "segments": [
+            {"center": (0.7595, 0.5263), "angle": -45}
+        ]
+    },
+        "daressalaam_jakarta_purple": {
+        "cities": ("daressalaam", "jakarta"),
+        "length": 7,
+        "segments": [
+            {"center": (0.5639, 0.6557), "angle": 0},
+            {"center": (0.5912, 0.6557), "angle": 0},
+            {"center": (0.6182, 0.6561), "angle": 0},
+            {"center": (0.6452, 0.6557), "angle": 0},
+            {"center": (0.6734, 0.6557), "angle": 0},
+            {"center": (0.7017, 0.6566), "angle": 0},
+            {"center": (0.7297, 0.6566), "angle": 0}
+        ]
+    },
+        "daressalaam_jakarta_green": {
+        "cities": ("daressalaam", "jakarta"),
+        "length": 7,
+        "segments": [
+            {"center": (0.5637, 0.6740), "angle": 0},
+            {"center": (0.5917, 0.6744), "angle": 0},
+            {"center": (0.6192, 0.6735), "angle": 0},
+            {"center": (0.6462, 0.6740), "angle": 0},
+            {"center": (0.6739, 0.6745), "angle": 0},
+            {"center": (0.7022, 0.6745), "angle": 0},
+            {"center": (0.7302, 0.6740), "angle": 0}
+        ]
+    },
+        "sydney_christchurch_white": {
+        "cities": ("sydney", "christchurch"),
+        "length": 1,
+        "segments": [
+            {"center": (0.9180, 0.8680), "angle": 27}
+        ]
+    },
+        "sydney_christchurch_red": {
+        "cities": ("sydney", "christchurch"),
+        "length": 1,
+        "segments": [
+            {"center": (0.9124, 0.8845), "angle": 27}
+        ]
+    },
+        "hongkong_manila": {
+        "cities": ("hongkong", "manila"),
+        "length": 1,
+        "segments": [
+            {"center": (0.7893, 0.5208), "angle": 40}
+        ]
+    },
+        "daressalaam_toamasina": {
+        "cities": ("daressalaam", "toamasina"),
+        "length": 1,
+        "segments": [
+            {"center": (0.5524, 0.7057), "angle": 55}
+        ]
+    },
+        "capetown_toamasina": {
+        "cities": ("capetown", "toamasina"),
+        "length": 3,
+        "segments": [
+            {"center": (0.4989, 0.8190), "angle": -30},
+            {"center": (0.5226, 0.7950), "angle": -30},
+            {"center": (0.5465, 0.7717), "angle": -30}
+        ]
+    },
+        "lagos_luanda_purple": {
+        "cities": ("lagos", "luanda"),
+        "length": 3,
+        "segments": [
+            {"center": (0.4391, 0.6470), "angle": 57}
+        ]
+    },
+        "lagos_luanda_yellow": {
+        "cities": ("lagos", "luanda"),
+        "length": 3,
+        "segments": [
+            {"center": (0.4473, 0.6369), "angle": 57}
+        ]
+    },
+        "luanda_capetown": {
+        "cities": ("luanda", "capetown"),
+        "length": 2,
+        "segments": [
+            {"center": (0.4576, 0.7309), "angle": 85},
+            {"center": (0.4602, 0.7781), "angle": 85}
+        ]
+    },
+        "vancouver_losangeles_green": {
+        "cities": ("vancouver", "losangeles"),
+        "length": 1,
+        "segments": [
+            {"center": (0.0427, 0.3696), "angle": 87}
+        ]
+    },
+        "vancouver_losangeles_red": {
+        "cities": ("vancouver", "losangeles"),
+        "length": 1,
+        "segments": [
+            {"center": (0.0509, 0.3700), "angle": 87}
+        ]
+    },
+        "lima_valparaiso_left": {
+        "cities": ("lima", "valparaiso"),
+        "length": 2,
+        "segments": [
+            {"center": (0.1703, 0.7662), "angle": 75},
+            {"center": (0.1773, 0.8138), "angle": 75}
+        ]
+    },
+        "lima_valparaiso_right": {
+        "cities": ("lima", "valparaiso"),
+        "length": 2,
+        "segments": [
+            {"center": (0.1796, 0.7616), "angle": 75},
+            {"center": (0.1870, 0.8093), "angle": 75}
+        ]
+    },
+        "lima_sydney_purple": {
+        "cities": ("lima", "sydney"),
+        "length": 8,
+        "segments": [
+            {"center": (0.9049, 0.8197), "angle": -40},
+            {"center": (0.9260, 0.7904), "angle": -40},
+            {"center": (0.9484, 0.7592), "angle": -40},
+            {"center": (0.0344, 0.7689), "angle": -15},
+            {"center": (0.0606, 0.7588), "angle": -15},
+            {"center": (0.0861, 0.7492), "angle": -15},
+            {"center": (0.1128, 0.7377), "angle": -15},
+            {"center": (0.1390, 0.7267), "angle": -15},
+        ]
+    },
+        "lima_sydney_black": {
+        "cities": ("lima", "sydney"),
+        "length": 8,
+        "segments": [
+            {"center": (0.9101, 0.8336), "angle": -40},
+            {"center": (0.9329, 0.8038), "angle": -40},
+            {"center": (0.9548, 0.7717), "angle": -40},
+            {"center": (0.0360, 0.7863), "angle": -15},
+            {"center": (0.0609, 0.7763), "angle": -15},
+            {"center": (0.0884, 0.7657), "angle": -15},
+            {"center": (0.1149, 0.7556), "angle": -15},
+            {"center": (0.1408, 0.7432), "angle": -15}
+        ]
+    },   
+        "miami_newyork": {
+        "cities": ("miami", "newyork"),
+        "length": 2,
+        "segments": [
+            {"center": (0.1616, 0.4553), "angle": -80},
+            {"center": (0.1770, 0.4114), "angle": -35}
+        ]
+    },   
+        "reykjavik_edinburgh": {
+        "cities": ("reykjavik", "edinburgh"),
+        "length": 2,
+        "segments": [
+            {"center": (0.3826, 0.1898), "angle": 6},
+            {"center": (0.3993, 0.2192), "angle": 85}
+        ]
+    },   
+        "reykjavik_murmansk": {
+        "cities": ("reykjavik", "murmansk"),
+        "length": 2,
+        "segments": [
+            {"center": (0.3795, 0.1568), "angle": -30},
+            {"center": (0.4052, 0.1388), "angle": -15},
+            {"center": (0.4322, 0.1301), "angle": -5},
+            {"center": (0.4604, 0.1323), "angle": 6}
+        ]
+    },   
+        "hamburg_athina": {
+        "cities": ("hamburg", "athina"),
+        "length": 2,
+        "segments": [
+            {"center": (0.4687, 0.3086), "angle": 35},
+            {"center": (0.4838, 0.3485), "angle": 75}
+        ]
+    },   
+        "marseille_athina": {
+        "cities": ("marseille", "athina"),
+        "length": 2,
+        "segments": [
+            {"center": (0.4347, 0.3779), "angle": 45},
+            {"center": (0.4597, 0.3957), "angle": 0}
+        ]
+    },   
+        "athina_tehran": {
+        "cities": ("athina", "tehran"),
+        "length": 2,
+        "segments": [
+            {"center": (0.5097, 0.3916), "angle": 0},
+            {"center": (0.5375, 0.3975), "angle": 15}
+        ]
+    },   
+        "casablanca_alzahira": {
+        "cities": ("casablanca", "alzahira"),
+        "length": 3,
+        "segments": [
+            {"center": (0.4257, 0.4415), "angle": 10},
+            {"center": (0.4527, 0.4484), "angle": 4},
+            {"center": (0.4797, 0.4507), "angle": 0}
+        ]
+    },   
+        "casablanca_lagos": {
+        "cities": ("casablanca", "lagos"),
+        "length": 4,
+        "segments": [
+            {"center": (0.3785, 0.4732), "angle": -60},
+            {"center": (0.3679, 0.5204), "angle": -75},
+            {"center": (0.3785, 0.5650), "angle": 30},
+            {"center": (0.4042, 0.5850), "angle": 15}
+        ]
+    },   
+        "winnipeg_cambridgebay": {
+        "cities": ("winnipeg", "cambridgebay"),
+        "length": 4,
+        "segments": [
+            {"center": (0.1388, 0.2728), "angle": -55},
+            {"center": (0.1544, 0.2325), "angle": -60},
+            {"center": (0.1660, 0.1853), "angle": -65},
+            {"center": (0.1752, 0.1398), "angle": -75}
+        ]
+    },   
+        "caracas_riodejaneiro_green": {
+        "cities": ("caracas", "riodejaneiro"),
+        "length": 4,
+        "segments": [
+            {"center": (0.2258, 0.6121), "angle": 25},
+            {"center": (0.2503, 0.6355), "angle": 35},
+            {"center": (0.2685, 0.6745), "angle": 55},
+            {"center": (0.2798, 0.7221), "angle": 75}
+        ]
+    },   
+        "caracas_riodejaneiro_black": {
+        "cities": ("caracas", "riodejaneiro"),
+        "length": 4,
+        "segments": [
+            {"center": (0.2169, 0.6286), "angle": 23},
+            {"center": (0.2428, 0.6497), "angle": 35},
+            {"center": (0.2616, 0.6878), "angle": 57},
+            {"center": (0.2713, 0.7364), "angle": 75}
+        ]
+    },   
+        "valparaiso_buenosaires": {
+        "cities": ("valparaiso", "buenosaires"),
+        "length": 3,
+        "segments": [
+            {"center": (0.1937, 0.9010), "angle": 70},
+            {"center": (0.2138, 0.9266), "angle": 0},
+            {"center": (0.2341, 0.8991), "angle": -70}
+        ]
+    },   
+        "daressalaam_mumbai": {
+        "cities": ("daressalaam", "mumbai"),
+        "length": 4,
+        "segments": [
+            {"center": (0.5680, 0.6337), "angle": -12},
+            {"center": (0.5938, 0.6231), "angle": -12},
+            {"center": (0.6172, 0.6011), "angle": -45},
+            {"center": (0.6321, 0.5621), "angle": -70}
+        ]
     }
 
 }
