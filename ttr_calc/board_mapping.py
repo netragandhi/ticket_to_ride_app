@@ -986,6 +986,152 @@ ROUTES = { #maybe implement it so i can change the empty image
             {"center": (0.6172, 0.6011), "angle": -45},
             {"center": (0.6321, 0.5621), "angle": -70}
         ]
+    },   
+        "tehran_mumbai_white": {
+        "cities": ("tehran", "mumbai"),
+        "length": 3,
+        "segments": [
+            {"center": (0.5743, 0.4576), "angle": 72},
+            {"center": (0.5897, 0.4979), "angle": 37},
+            {"center": (0.6172, 0.5089), "angle": -3}
+        ]
+    },   
+        "tehran_mumbai_purple": {
+        "cities": ("tehran", "mumbai"),
+        "length": 3,
+        "segments": [
+            {"center": (0.5660, 0.4733), "angle": 72},
+            {"center": (0.5848, 0.5144), "angle": 37},
+            {"center": (0.6120, 0.5282), "angle": -3}
+        ]
+    },   
+        "mumbai_bangkok_red": {
+        "cities": ("mumbai", "bangkok"),
+        "length": 3,
+        "segments": [
+            {"center": (0.6686, 0.4801), "angle": -25},
+            {"center": (0.6989, 0.4764), "angle": 20},
+            {"center": (0.7238, 0.5076), "angle": 50}
+        ]
+    },   
+        "mumbai_bangkok_yellow": {
+        "cities": ("mumbai", "bangkok"),
+        "length": 3,
+        "segments": [
+            {"center": (0.6662, 0.5016), "angle": -25},
+            {"center": (0.6955, 0.4934), "angle": 20},
+            {"center": (0.7174, 0.5246), "angle": 50}
+        ]
+    },   
+        "bangkok_jakarta": {
+        "cities": ("bangkok", "jakarta"),
+        "length": 2,
+        "segments": [
+            {"center": (0.7286, 0.5880), "angle": -75},
+            {"center": (0.7382, 0.6269), "angle": 30}
+        ]
+    },   
+        "jakarta_perth": {
+        "cities": ("jakarta", "perth"),
+        "length": 3,
+        "segments": [
+            {"center": (0.7528, 0.7021), "angle": -85},
+            {"center": (0.7569, 0.7519), "angle": 70},
+            {"center": (0.7729, 0.7905), "angle": 35}
+        ]
+    },   
+        "bangkok_manila": {
+        "cities": ("bangkok", "manila"),
+        "length": 2,
+        "segments": [
+            {"center": (0.7613, 0.5745), "angle": 15},
+            {"center": (0.7885, 0.5658), "angle": -35}
+        ]
+    },   
+        "manila_honolulu": {
+        "cities": ("manila", "honolulu"),
+        "length": 5,
+        "segments": [
+            {"center": (0.8332, 0.5608), "angle": 20},
+            {"center": (0.8605, 0.5736), "angle": 10},
+            {"center": (0.8880, 0.5773), "angle": -1},
+            {"center": (0.9153, 0.5709), "angle": -13},
+            {"center": (0.9414, 0.5562), "angle": -25}
+        ]
+    },   
+        "portmoresby_honolulu": {
+        "cities": ("portmoresby", "honolulu"),
+        "length": 3,
+        "segments": [
+            {"center": (0.9239, 0.6570), "angle": -20},
+            {"center": (0.9460, 0.6272), "angle": -50},
+            {"center": (0.9579, 0.5828), "angle": -80}
+        ]
+    },   
+        "hongkong_tokyo": {
+        "cities": ("hongkong", "tokyo"),
+        "length": 3,
+        "segments": [
+            {"center": (0.7873, 0.4365), "angle": -85},
+            {"center": (0.7962, 0.3920), "angle": -60},
+            {"center": (0.8183, 0.3751), "angle": 15}
+        ]
+    },   
+        "tokyo_petropavlovsk": {
+        "cities": ("hongkong", "tokyo"),
+        "length": 3,
+        "segments": [
+            {"center": (0.8412, 0.3443), "angle": 89},
+            {"center": (0.8474, 0.2971), "angle": -65}
+        ]
+    },   
+        "petropavlovsk_anchorage": {
+        "cities": ("petropavlovsk", "anchorage"),
+        "length": 3,
+        "segments": [
+            {"center": (0.8869, 0.2746), "angle": 15},
+            {"center": (0.9144, 0.2751), "angle": -15},
+            {"center": (0.9368, 0.2494), "angle": -45}
+        ]
+    },   
+        "tiksi_anchorage": {
+        "cities": ("tiksi", "anchorage"),
+        "length": 8,
+        "segments": [
+            {"center": (0.7531, 0.0899), "angle": 5},
+            {"center": (0.7803, 0.0935), "angle": 5},
+            {"center": (0.8070, 0.0990), "angle": 5},
+            {"center": (0.8358, 0.1022), "angle": 5},
+            {"center": (0.8625, 0.1097), "angle": 10},
+            {"center": (0.8885, 0.1238), "angle": 25},
+            {"center": (0.9142, 0.1453), "angle": 30},
+            {"center": (0.9381, 0.1724), "angle": 40}
+        ]
+    },   
+        "tokyo_vancouver": {
+        "cities": ("tokyo", "vancouver"),
+        "length": 6,
+        "segments": [
+            {"center": (0.8687, 0.3701), "angle": -40},
+            {"center": (0.8913, 0.3426), "angle": -35},
+            {"center": (0.9162, 0.3223), "angle": -20},
+            {"center": (0.9422, 0.3077), "angle": -15},
+            {"center": (0.9699, 0.2990), "angle": -8},
+            {"center": (0.0254, 0.3183), "angle": 10}
+        ]
+    },   
+        "tiksi_petropavlovsk": {
+        "cities": ("tiksi", "petropavlovsk"),
+        "length": 7,
+        "segments": [
+            {"center": (0.7533, 0.1082), "angle": 5},
+            {"center": (0.7811, 0.1119), "angle": 5},
+            {"center": (0.8078, 0.1165), "angle": 5},
+            {"center": (0.8350, 0.1220), "angle": 10},
+            {"center": (0.8610, 0.1389), "angle": 30},
+            {"center": (0.8769, 0.1751), "angle": 85},
+            {"center": (0.8731, 0.2205), "angle": -70}
+        ]
     }
 
 }
