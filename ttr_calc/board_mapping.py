@@ -1,4 +1,10 @@
 SEGMENT_SIZE = (0.026, 0.016)
+BOARD_CORNERS = [
+    (0.0139, 0.0362),
+    (0.9874, 0.0073),
+    (0.9967, 0.9936),
+    (0.0072, 0.9862),
+]
 ROUTES = { #maybe implement it so i can change the empty image
     "caracas_miami": {
         "cities": ("caracas", "miami"),
@@ -1132,6 +1138,59 @@ ROUTES = { #maybe implement it so i can change the empty image
             {"center": (0.8769, 0.1751), "angle": 85},
             {"center": (0.8731, 0.2205), "angle": -70}
         ]
+    },   
+        "tokyo_losangeles_black": {
+        "cities": ("tokyo", "losangeles"),
+        "length": 7,
+        "segments": [
+            {"center": (0.8602, 0.4237), "angle": 70},
+            {"center": (0.8749, 0.4645), "angle": 50},
+            {"center": (0.8975, 0.4911), "angle": 15},
+            {"center": (0.9245, 0.4915), "angle": -15},
+            {"center": (0.9504, 0.4709), "angle": -35},
+            {"center": (0.9692, 0.4366), "angle": -45},
+            {"center": (0.0244, 0.4214), "angle": -15}
+        ]
+    },   
+        "tokyo_losangeles_green": {
+        "cities": ("tokyo", "losangeles"),
+        "length": 7,
+        "segments": [
+            {"center": (0.8510, 0.4310), "angle": 70},
+            {"center": (0.8669, 0.4782), "angle": 50},
+            {"center": (0.8954, 0.5076), "angle": 15},
+            {"center": (0.9271, 0.5085), "angle": -15},
+            {"center": (0.9561, 0.4869), "angle": -35},
+            {"center": (0.9782, 0.4484), "angle": -45},
+            {"center": (0.0267, 0.4397), "angle": -15}
+        ]
+    },   
+        "tokyo_honolulu": {
+        "cities": ("tokyo", "honolulu"),
+        "length": 5,
+        "segments": [
+            {"center": (0.8404, 0.4370), "angle": 70},
+            {"center": (0.8541, 0.4823), "angle": 50},
+            {"center": (0.8754, 0.5140), "angle": 30},
+            {"center": (0.9001, 0.5296), "angle": 13},
+            {"center": (0.9278, 0.5351), "angle": 0}
+        ]
+    },   
+        "portmoresby_sydney": {
+        "cities": ("portmoresby", "sydney"),
+        "length": 3,
+        "segments": [
+            {"center": (0.9060, 0.7084), "angle": 65},
+            {"center": (0.9095, 0.7552), "angle": -80},
+            {"center": (0.8985, 0.7983), "angle": -45}
+        ]
+    },   
+        "anchorage_vancouver": {
+        "cities": ("anchorage", "vancouver"),
+        "length": 2,
+        "segments": [
+            {"center": (0.0288, 0.2472), "angle": 5},
+            {"center": (0.0467, 0.2788), "angle": 85}
+        ]
     }
-
 }

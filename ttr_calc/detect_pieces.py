@@ -1,7 +1,7 @@
 import numpy as np
 import cv2 as cv
 import matplotlib.pyplot as plt
-from board_mapping import SEGMENT_SIZE, ROUTES
+from board_mapping import SEGMENT_SIZE, ROUTES, BOARD_CORNERS
 from norm_points import NORM_POINTS, NORM_BOX_H, NORM_BOX_W
 
 def align_images(empty_img, played_img):
@@ -47,22 +47,51 @@ def match_images(empty_img, aligned_img):
     played_hsv = cv.cvtColor(aligned_img, cv.COLOR_BGR2HSV).astype(np.float32)
 
     h, w = empty_img.shape[:2]
-
-    normalized_boxes = []
-    for cx, cy in NORM_POINTS:
-        x1 = int((cx - NORM_BOX_W/2) * w)
-        y1 = int((cy - NORM_BOX_H/2) * h)
-        x2 = int((cx + NORM_BOX_W/2) * w)
-        y2 = int((cy + NORM_BOX_H/2) * h)
-        normalized_boxes.append((x1, y1, x2, y2))
-
     mask = np.zeros((h, w), dtype=np.uint8)
-    for x1, y1, x2, y2 in normalized_boxes:
-        mask[y1:y2, x1:x2] = 255
+
+    padding_px = 30
+    w_seg_px = int(SEGMENT_SIZE[0] * w) + padding_px
+    h_seg_px = int(SEGMENT_SIZE[1] * h) + padding_px
+
+    for route_name, route in ROUTES.items():
+        for seg in route["segments"]:
+            cx = int(seg["center"][0] * w)
+            cy = int(seg["center"][1] * h)
+            angle = seg["angle"]
+
+            mask = create_rotated_mask(mask, aligned_img.shape, (cx, cy), (w_seg_px, h_seg_px), angle)
+    
+    board_mask = np.zeros((h, w), dtype=np.uint8)
+    pts = []
+    for x_norm, y_norm in BOARD_CORNERS:
+        x = int(x_norm * w)
+        y = int(y_norm * h)
+        pts.append([x, y])
+
+    pts = np.array([pts], dtype=np.int32)
+    cv.fillPoly(board_mask, pts, 255)
+
+    # cv.imshow("mask", mask)
+    background_mask = cv.bitwise_not(mask)
+    # cv.imshow("backmask", background_mask)
+
+    final_mask = cv.bitwise_and(board_mask, background_mask)
+    cv.imshow("final", final_mask)
+
+    # normalized_boxes = []
+    # for cx, cy in NORM_POINTS:
+    #     x1 = int((cx - NORM_BOX_W/2) * w)
+    #     y1 = int((cy - NORM_BOX_H/2) * h)
+    #     x2 = int((cx + NORM_BOX_W/2) * w)
+    #     y2 = int((cy + NORM_BOX_H/2) * h)
+    #     normalized_boxes.append((x1, y1, x2, y2))
+
+    # for x1, y1, x2, y2 in normalized_boxes:
+    #     mask[y1:y2, x1:x2] = 255
 
     for c in [1,2]:  # S=1, V=2
-        template_vals = empty_hsv[:,:,c][mask==255]
-        played_vals = played_hsv[:,:,c][mask==255]
+        template_vals = empty_hsv[:,:,c][background_mask==255]
+        played_vals = played_hsv[:,:,c][background_mask==255]
 
         mean_t, std_t = template_vals.mean(), template_vals.std()
         mean_p, std_p = played_vals.mean(), played_vals.std()
@@ -78,18 +107,20 @@ def match_images(empty_img, aligned_img):
     played_norm = cv.cvtColor(played_hsv.astype(np.uint8), cv.COLOR_HSV2BGR)
     return played_norm
 
-def create_rotated_mask(board_shape, center_px, size_px, angle):
-    mask = np.zeros(board_shape[:2], dtype=np.uint8)
+def create_rotated_mask(mask, board_shape, center_px, size_px, angle):
     rect = (center_px, size_px, angle)
     box = cv.boxPoints(rect).astype(int)
     cv.fillPoly(mask, [box], 255)
     return mask
 
 def analyze_segment(empty_img, aligned_img, mask):
+    empty_hsv = cv.cvtColor(empty_img, cv.COLOR_BGR2HSV).astype(np.float32)
+    aligned_hsv = cv.cvtColor(aligned_img, cv.COLOR_BGR2HSV).astype(np.float32)
+
     # Color difference
-    diff = cv.absdiff(empty_img, aligned_img)
+    diff = cv.absdiff(empty_hsv, aligned_hsv)
     masked_diff = diff[mask == 255]
-    color_diff = np.percentile(masked_diff, 90)
+    color_diff = np.percentile(masked_diff[:,1:], 90)
 
     # 1. Structural Change (Canny Edges)
     # Catches pieces even if they are the same color as the board
@@ -126,8 +157,10 @@ def analyze_routes(empty_img, aligned_img, ROUTES):
             cx = int(seg["center"][0] * w)
             cy = int(seg["center"][1] * h)
             angle = seg["angle"]
+    
+            blank_mask = np.zeros(empty_img.shape[:2], dtype=np.uint8)
 
-            mask = create_rotated_mask(aligned_img.shape, (cx, cy), (w_seg_px, h_seg_px), angle)
+            mask = create_rotated_mask(blank_mask, aligned_img.shape, (cx, cy), (w_seg_px, h_seg_px), angle)
 
             occupied, color_diff, edge_diff, tex_diff, reason = analyze_segment(empty_img, aligned_img, mask)
 
@@ -142,6 +175,7 @@ def analyze_routes(empty_img, aligned_img, ROUTES):
             })
 
         results[route_name] = segment_results
+        
     return results
 
 def visualize_segments(image, matched, ROUTES, results):
@@ -223,7 +257,7 @@ def visualize_segments(image, matched, ROUTES, results):
     cv.destroyAllWindows()
 
 empty_img = cv.imread('imgs/empty.jpeg')
-played_img = cv.imread('imgs/played3.jpeg')
+played_img = cv.imread('imgs/played.jpeg')
 
 aligned = align_images(empty_img, played_img)
 matched = match_images(empty_img, aligned)
