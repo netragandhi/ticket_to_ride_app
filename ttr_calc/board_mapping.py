@@ -5,6 +5,12 @@ BOARD_CORNERS = [
     (0.9967, 0.9936),
     (0.0072, 0.9862),
 ]
+HUE_RANGES = {
+    "red":    [(0, 10), (170, 179)],  # red wraps around
+    "yellow": [(10, 30)],
+    "green":  [(30, 50)],
+    "blue":   [(50, 130)]
+}
 ROUTES = { #maybe implement it so i can change the empty image
     "caracas_miami": {
         "cities": ("caracas", "miami"),

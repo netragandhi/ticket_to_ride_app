@@ -13,10 +13,15 @@ def collect_baseline_stats(empty_imgs, ROUTES):
         aligned = align_images(img1, img2)
         matched = match_images(img1, aligned)
 
-        results = analyze_routes(img1, matched, ROUTES)
+        _, results = analyze_routes(img1, matched, ROUTES)
 
         for route, segs in results.items():
             for s in segs:
+                if s["occupied"] == True:
+                    print(f" Segment {route}: occupied={s['occupied']}, "
+                        f"color_diff={s['color_diff']:.2f}, edge_diff={s['edge_diff']:.2f}, "
+                        f"tex_diff={s['tex_diff']:.2f}, reason={s['reason']}")
+
                 stats.append([
                     s["color_diff"],
                     s["edge_diff"],
@@ -27,10 +32,10 @@ def collect_baseline_stats(empty_imgs, ROUTES):
     return stats
 
 def compute_thresholds(stats):
-    mean = stats.mean(axis=0)
+    median = np.median(stats, axis=0)
     std  = stats.std(axis=0)
 
-    thr = mean + 3 * std   # 99.7% noise rejection
+    thr = median + 3 * std   # 99.7% noise rejection
 
     print("Learned thresholds:")
     print(f"COLOR_THR = {thr[0]:.2f}")

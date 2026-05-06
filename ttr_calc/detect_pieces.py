@@ -1,8 +1,8 @@
 import numpy as np
 import cv2 as cv
 import matplotlib.pyplot as plt
-from board_mapping import SEGMENT_SIZE, ROUTES, BOARD_CORNERS
-from norm_points import NORM_POINTS, NORM_BOX_H, NORM_BOX_W
+from board_mapping import SEGMENT_SIZE, ROUTES, BOARD_CORNERS, HUE_RANGES
+# from norm_points import NORM_POINTS, NORM_BOX_H, NORM_BOX_W
 
 def align_images(empty_img, played_img):
     # Loads image as single channel grayscale
@@ -98,10 +98,10 @@ def match_images(empty_img, aligned_img):
 
         played_hsv[:,:,c] = (played_hsv[:,:,c] - mean_p) * (std_t / (std_p + 1e-6)) + mean_t
         played_hsv[:,:,c] = np.clip(played_hsv[:,:,c], 0, 255)
-        print(f"Channel {c}")
-        print(f"Template mean/std: {mean_t:.2f}, {std_t:.2f}")
-        print(f"Played mean/std:   {mean_p:.2f}, {std_p:.2f}")
-        print("-----")
+        # print(f"Channel {c}")
+        # print(f"Template mean/std: {mean_t:.2f}, {std_t:.2f}")
+        # print(f"Played mean/std:   {mean_p:.2f}, {std_p:.2f}")
+        # print("-----")
 
     # H channel untouched
     played_norm = cv.cvtColor(played_hsv.astype(np.uint8), cv.COLOR_HSV2BGR)
@@ -132,23 +132,43 @@ def analyze_segment(empty_img, aligned_img, mask):
     # Catches smooth vs. rough surface changes (good for shadows/reflections)
     tex_diff = abs(np.var(aligned_img[mask == 255]) - np.var(empty_img[mask == 255]))
 
-    if color_diff > 100: # these def need to be changed and determined statistically
+    # 4. Finding the average hue of the segment
+    hue = aligned_hsv[:, :, 0]
+    segment_hues = hue[mask == 255]
+    avg_hue = np.mean(segment_hues)
+
+    # 5. Finding the average value of the segment
+    value = aligned_hsv[:, :, 2]
+    segment_value = value[mask == 255]
+    avg_value = np.mean(segment_value)
+
+    if color_diff > 80: # these def need to be changed and determined statistically
         occupied = True
         reason = "color"
-    elif edge_diff > 60 or tex_diff > 1000:
+    elif tex_diff > 1000:
+        occupied = True
+        reason = "texture"
+    elif color_diff > 70 and tex_diff > 800:
+        occupied = True
+        reason = "color/texture"
+    elif edge_diff > 75 and tex_diff > 800:
         occupied = True
         reason = "edge/texture"
+    elif color_diff > 40 and edge_diff > 40 and tex_diff > 100:
+        occupied = True
+        reason = "color/edge/texture"
     else:
         occupied = False
         reason = "none"
 
-    return occupied, color_diff, edge_diff, tex_diff, reason
+    return avg_hue, avg_value, occupied, color_diff, edge_diff, tex_diff, reason
 
 def analyze_routes(empty_img, aligned_img, ROUTES):
     h, w = empty_img.shape[:2]
     results = {}
     w_seg_px = int(SEGMENT_SIZE[0] * w)
     h_seg_px = int(SEGMENT_SIZE[1] * h)
+    occupied_routes = set()
 
     for route_name, route in ROUTES.items():
         segment_results = []
@@ -162,11 +182,13 @@ def analyze_routes(empty_img, aligned_img, ROUTES):
 
             mask = create_rotated_mask(blank_mask, aligned_img.shape, (cx, cy), (w_seg_px, h_seg_px), angle)
 
-            occupied, color_diff, edge_diff, tex_diff, reason = analyze_segment(empty_img, aligned_img, mask)
+            avg_hue, avg_value, occupied, color_diff, edge_diff, tex_diff, reason = analyze_segment(empty_img, aligned_img, mask)
 
             segment_results.append({
                 "center": (cx, cy),
                 "angle": angle,
+                "hue": avg_hue,
+                "value": avg_value,
                 "color_diff": color_diff,
                 "edge_diff": edge_diff,
                 "tex_diff": tex_diff,
@@ -175,8 +197,57 @@ def analyze_routes(empty_img, aligned_img, ROUTES):
             })
 
         results[route_name] = segment_results
-        
-    return results
+
+        if is_route_occupied(segment_results):
+            occupied_routes.add(route_name)
+
+    route_owners = find_route_owners(occupied_routes, results)
+    print(route_owners)
+
+    return route_owners, results
+
+def is_route_occupied(segment_results):
+    count_occupied = 0
+    for i in range(len(segment_results)):
+        if segment_results[i]["occupied"]:
+            count_occupied += 1
+    if count_occupied / len(segment_results) > 0.50:
+        return True
+    return False
+
+def find_route_owners(occupied_routes, results):
+    visited_routes = set()
+    route_owners = {
+        "red": set(),
+        "black": set(),
+        "green": set(),
+        "blue": set(),
+        "yellow": set()
+    }
+    for route_name in occupied_routes:
+        segment_results = results[route_name]
+        segment_results_hues = []
+        segment_results_values = []
+
+        for i in range(len(segment_results)):
+            segment_results_hues.append(segment_results[i]["hue"])
+            segment_results_values.append(segment_results[i]["value"])
+        route_avg_hue = np.mean(segment_results_hues)
+        route_avg_value = np.mean(segment_results_values)
+
+        if route_avg_value < 80:
+            if route_name not in visited_routes:
+                visited_routes.add(route_name)
+                route_owners["black"].add(route_name)
+            continue
+
+        for color, ranges in HUE_RANGES.items():
+            for lo, hi in ranges:
+                if lo <= route_avg_hue <= hi:
+                    if route_name not in visited_routes:
+                        visited_routes.add(route_name)
+                        route_owners[color].add(route_name)
+    return route_owners
 
 def visualize_segments(image, matched, ROUTES, results):
     vis = image.copy()
@@ -257,19 +328,19 @@ def visualize_segments(image, matched, ROUTES, results):
     cv.destroyAllWindows()
 
 empty_img = cv.imread('imgs/empty.jpeg')
-played_img = cv.imread('imgs/played.jpeg')
+played_img = cv.imread('imgs/played2.jpeg')
 
 aligned = align_images(empty_img, played_img)
 matched = match_images(empty_img, aligned)
 # diff_vis = cv.absdiff(aligned, matched)
 # cv.imshow("Normalization Difference", diff_vis)
-results = analyze_routes(empty_img, matched, ROUTES)
+route_owners, results = analyze_routes(empty_img, matched, ROUTES)
 
 for route, segs in results.items():
     print(f"\nRoute: {route}")
     for i, s in enumerate(segs):
-        print(f" Segment {i}: occupied={s['occupied']}, "
-              f"color_diff={s['color_diff']:.2f}, edge_diff={s['edge_diff']:.2f}, "
-              f"tex_diff={s['tex_diff']:.2f}, reason={s['reason']}")
+        print(f" Segment {i}: hue={s['hue']}, value={s['value']}, occupied={s['occupied']}, ")
+            #   f"color_diff={s['color_diff']:.2f}, edge_diff={s['edge_diff']:.2f}, "
+            #   f"tex_diff={s['tex_diff']:.2f}, reason={s['reason']}")
 
 visualize_segments(empty_img, matched, ROUTES, results)
