@@ -76,7 +76,7 @@ def match_images(empty_img, aligned_img):
     # cv.imshow("backmask", background_mask)
 
     final_mask = cv.bitwise_and(board_mask, background_mask)
-    cv.imshow("final", final_mask)
+    # cv.imshow("final", final_mask)
 
     # normalized_boxes = []
     # for cx, cy in NORM_POINTS:
@@ -163,7 +163,7 @@ def analyze_segment(empty_img, aligned_img, mask):
 
     return avg_hue, avg_value, occupied, color_diff, edge_diff, tex_diff, reason
 
-def analyze_routes(empty_img, aligned_img, ROUTES):
+def analyze_routes(empty_img, aligned_img):
     h, w = empty_img.shape[:2]
     results = {}
     w_seg_px = int(SEGMENT_SIZE[0] * w)
@@ -249,7 +249,7 @@ def find_route_owners(occupied_routes, results):
                         route_owners[color].add(route_name)
     return route_owners
 
-def visualize_segments(image, matched, ROUTES, results):
+def visualize_segments(image, matched, results):
     vis = image.copy()
     vis_matched = matched.copy()
     h_img, w_img = image.shape[:2]
@@ -294,8 +294,6 @@ def visualize_segments(image, matched, ROUTES, results):
             # print(f"Normalized: ({x_norm:.4f}, {y_norm:.4f})")
             print(f'{{"center": ({x_norm:.4f}, {y_norm:.4f}), "angle": XXX}},')
 
-
-
             points.append((x_norm, y_norm))
 
             # Draw crosshair
@@ -326,21 +324,3 @@ def visualize_segments(image, matched, ROUTES, results):
             break
 
     cv.destroyAllWindows()
-
-empty_img = cv.imread('imgs/empty.jpeg')
-played_img = cv.imread('imgs/played2.jpeg')
-
-aligned = align_images(empty_img, played_img)
-matched = match_images(empty_img, aligned)
-# diff_vis = cv.absdiff(aligned, matched)
-# cv.imshow("Normalization Difference", diff_vis)
-route_owners, results = analyze_routes(empty_img, matched, ROUTES)
-
-for route, segs in results.items():
-    print(f"\nRoute: {route}")
-    for i, s in enumerate(segs):
-        print(f" Segment {i}: hue={s['hue']}, value={s['value']}, occupied={s['occupied']}, ")
-            #   f"color_diff={s['color_diff']:.2f}, edge_diff={s['edge_diff']:.2f}, "
-            #   f"tex_diff={s['tex_diff']:.2f}, reason={s['reason']}")
-
-visualize_segments(empty_img, matched, ROUTES, results)
